@@ -72,6 +72,7 @@ public class JavadocService {
                 .replace('.', '/');
         
         try (ZipInputStream zipInputStream = getClassEntry(artifactData, targetEntry)) {
+            if (zipInputStream == null) return null;
             var cu = StaticJavaParser.parse(zipInputStream);
             ClassJavadocData classJavadocData = getClassJavadocData(cu, targetFqn);
             cjRepository.save(classJavadocData);
