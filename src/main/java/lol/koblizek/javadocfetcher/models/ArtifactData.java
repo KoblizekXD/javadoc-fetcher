@@ -26,7 +26,7 @@ public class ArtifactData {
     
     private String uri; // The URI leading to the artifact's files on the repository
     
-    @OneToMany
+    @OneToMany(mappedBy = "artifactData")
     private Set<ClassJavadocData> classJavadocData;
 
     public ArtifactData(String id, String uri) {

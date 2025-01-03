@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 
 @SpringBootTest
@@ -19,11 +18,11 @@ class JavadocFetcherApplicationTests {
     private JavadocService javadocService;
     
     @Test
-    void testJavadocParsing() throws MalformedURLException {
+    void testJavadocParsing() {
         try (InputStream inputStream = URI.create("https://raw.githubusercontent.com/google/guava/refs/heads/master/guava/src/com/google/common/eventbus/Dispatcher.java")
                      .toURL().openStream()) {
             CompilationUnit cu = StaticJavaParser.parse(inputStream);
-            javadocService.getClassJavadocData(cu, "com.google.common.eventbus.Dispatcher");
+            javadocService.getClassJavadocData(cu, "com.google.common.eventbus.Dispatcher.PerThreadQueuedDispatcher");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
