@@ -1,6 +1,7 @@
 package lol.koblizek.javadocfetcher.controllers;
 
 import lol.koblizek.javadocfetcher.models.http.ArtifactQuery;
+import lol.koblizek.javadocfetcher.models.http.ArtifactQueryWithoutClass;
 import lol.koblizek.javadocfetcher.services.JavadocService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +27,15 @@ public class JavadocController {
      * Returns a set of all classes available in the artifact.
      * The reason for why this method uses POST rather than GET is that
      * the request may create a new database entries
-     * @param id The id of the artifact
+     * @param artifactQuery The artifact query
      * @return A set of all classes available in the artifact
      */
     @PostMapping("/classes")
-    public ResponseEntity<Set<String>> getAvailableClasses(@RequestParam String id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Set<String>> getAvailableClasses(@RequestParam ArtifactQueryWithoutClass artifactQuery) {
+        Set<String> classes = javadocService.getClasses(artifactQuery);
+        if (classes.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(classes);
     }
 }
