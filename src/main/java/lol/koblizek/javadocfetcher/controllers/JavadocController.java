@@ -24,7 +24,7 @@ public class JavadocController {
     
     @PostMapping
     public ResponseEntity<ClassJavadocData> fetchJavadoc(@RequestBody ArtifactQuery artifactQuery) {
-        
+        return null;
     }
 
     /**
