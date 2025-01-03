@@ -6,6 +6,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.nodeTypes.NodeWithJavadoc;
+import jakarta.transaction.Transactional;
 import lol.koblizek.javadocfetcher.models.ArtifactData;
 import lol.koblizek.javadocfetcher.models.ClassJavadocData;
 import lol.koblizek.javadocfetcher.models.ExtendedJavadocData;
@@ -51,6 +52,7 @@ public class JavadocService {
         return Set.of();
     }
     
+    @Transactional
     public ClassJavadocData lookupJavadoc(ArtifactQuery artifactQuery) {
         String targetFqn = artifactQuery.classData().replace('$', '.');
         Optional<ClassJavadocData> byId = cjRepository.findById(targetFqn);
