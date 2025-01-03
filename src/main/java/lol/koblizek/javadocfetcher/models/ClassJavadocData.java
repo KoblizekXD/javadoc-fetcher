@@ -19,7 +19,6 @@ public class ClassJavadocData {
     }
     
     public ClassJavadocData() {
-        
     }
 
     public void setId(String id) {

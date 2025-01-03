@@ -1,10 +1,14 @@
 package lol.koblizek.javadocfetcher.controllers;
 
+import lol.koblizek.javadocfetcher.models.ClassJavadocData;
 import lol.koblizek.javadocfetcher.models.http.ArtifactQuery;
 import lol.koblizek.javadocfetcher.models.http.ArtifactQueryWithoutClass;
 import lol.koblizek.javadocfetcher.services.JavadocService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
 
@@ -19,7 +23,7 @@ public class JavadocController {
     }
     
     @PostMapping
-    public void fetchJavadoc(@RequestBody ArtifactQuery artifactQuery) {
+    public ResponseEntity<ClassJavadocData> fetchJavadoc(@RequestBody ArtifactQuery artifactQuery) {
         
     }
 
@@ -31,7 +35,7 @@ public class JavadocController {
      * @return A set of all classes available in the artifact
      */
     @PostMapping("/classes")
-    public ResponseEntity<Set<String>> getAvailableClasses(@RequestParam ArtifactQueryWithoutClass artifactQuery) {
+    public ResponseEntity<Set<String>> getAvailableClasses(@RequestBody ArtifactQueryWithoutClass artifactQuery) {
         Set<String> classes = javadocService.getClasses(artifactQuery);
         if (classes.isEmpty()) {
             return ResponseEntity.notFound().build();

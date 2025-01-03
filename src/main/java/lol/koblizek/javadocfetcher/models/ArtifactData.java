@@ -26,7 +26,7 @@ public class ArtifactData {
     
     private String uri; // The URI leading to the artifact's files on the repository
     
-    @OneToMany(mappedBy = "artifact_data")
+    @OneToMany
     private Set<ClassJavadocData> classJavadocData;
 
     public ArtifactData(String id, String uri) {
@@ -77,8 +77,7 @@ public class ArtifactData {
             ZipEntry entry;
             while ((entry = is.getNextEntry()) != null) {
                 if (entry.getName().endsWith(".class")) {
-                    classes.add(entry.getName().replace(".class", "").replace("/", ".")
-                            .replace("$", "."));
+                    classes.add(entry.getName().replace(".class", "").replace("/", "."));
                 }
             }
             return classes;
