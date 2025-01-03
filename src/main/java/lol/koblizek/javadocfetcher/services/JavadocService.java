@@ -71,11 +71,13 @@ public class JavadocService {
         
         try (ZipInputStream zipInputStream = getClassEntry(artifactData, targetEntry)) {
             var cu = StaticJavaParser.parse(zipInputStream);
-            ClassJavadocData classJavadocData = cjRepository.save(getClassJavadocData(cu, targetFqn));
+            ClassJavadocData classJavadocData = getClassJavadocData(cu, targetFqn);
+            cjRepository.save(classJavadocData);
             artifactData.addClassData(classJavadocData);
-            adRepository.save(artifactData);
+            classJavadocData.setArtifactData(adRepository.save(artifactData));
+            cjRepository.save(classJavadocData);
             return classJavadocData;
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             return null;
         }
     }
@@ -112,7 +114,8 @@ public class JavadocService {
                 .path(data.getArtifactId() + "-" + data.getVersion() + "-sources.jar")
                 .build().toUri();
 
-        try (var is = new ZipInputStream(sourceFileUri.toURL().openStream())) {
+        try {
+            var is = new ZipInputStream(sourceFileUri.toURL().openStream());
             ZipEntry entry;
             while ((entry = is.getNextEntry()) != null) {
                 if (entry.getName().equals(binaryClassName + ".java")) {

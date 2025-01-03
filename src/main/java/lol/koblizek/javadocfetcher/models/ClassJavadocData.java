@@ -1,5 +1,6 @@
 package lol.koblizek.javadocfetcher.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.*;
 
@@ -16,12 +17,13 @@ public class ClassJavadocData {
     @Id
     private String id; // The fully qualified name of the class
     
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "class_javadoc_data_id")
     private List<ExtendedJavadocData> javadocData;
     
     @ManyToOne
     @JoinColumn(name = "artifact_data_id")
+    @JsonIgnore
     private ArtifactData artifactData;
 
     public ArtifactData getArtifactData() {
@@ -50,5 +52,9 @@ public class ClassJavadocData {
     
     public void addJavadoc(ExtendedJavadocData comment) throws JsonProcessingException {
         javadocData.add(comment);
+    }
+
+    public List<ExtendedJavadocData> getJavadocData() {
+        return javadocData;
     }
 }

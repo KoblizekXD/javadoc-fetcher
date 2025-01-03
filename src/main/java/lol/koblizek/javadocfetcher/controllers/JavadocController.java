@@ -24,7 +24,11 @@ public class JavadocController {
     
     @PostMapping
     public ResponseEntity<ClassJavadocData> fetchJavadoc(@RequestBody ArtifactQuery artifactQuery) {
-        return null;
+        ClassJavadocData classJavadocData = javadocService.lookupJavadoc(artifactQuery);
+        if (classJavadocData == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(classJavadocData);
     }
 
     /**

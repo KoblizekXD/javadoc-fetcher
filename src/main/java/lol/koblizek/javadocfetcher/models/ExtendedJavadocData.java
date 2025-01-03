@@ -1,8 +1,10 @@
 package lol.koblizek.javadocfetcher.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.javadoc.description.JavadocSnippet;
 import jakarta.persistence.*;
@@ -20,16 +22,20 @@ public class ExtendedJavadocData {
         simpleModule.addSerializer(JavadocSnippet.class, new JavadocSnippetSerializer());
         simpleModule.addDeserializer(JavadocSnippet.class, new JavadocSnippetDeserializer());
         OBJECT_MAPPER.registerModule(simpleModule);
+        OBJECT_MAPPER.registerModule(new Jdk8Module());
     }
     
     @Id
     @GeneratedValue
     private Long id;
     
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String javadoc;
     
     @ManyToOne
     @JoinColumn(name = "class_javadoc_data_id")
+    @JsonIgnore
     private ClassJavadocData classJavadocData;
 
     public ExtendedJavadocData(JavadocComment comment) throws JsonProcessingException {

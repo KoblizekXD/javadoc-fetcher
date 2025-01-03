@@ -1,5 +1,6 @@
 package lol.koblizek.javadocfetcher.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -66,6 +67,7 @@ public class ArtifactData {
         this.uri = uri;
     }
 
+    @JsonIgnore
     public Set<String> getAvailableClasses() {
         URI sourceFileUri = UriComponentsBuilder.fromUriString(getUri())
                 .path("/")
