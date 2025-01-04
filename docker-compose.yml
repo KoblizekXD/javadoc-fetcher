@@ -5,8 +5,6 @@ services:
       - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/dakidoc
       - JDBC_DATABASE_PASSWORD=${PG_PASS}
       - JDBC_DATABASE_USERNAME=${PG_USER}
-    ports:
-        - "8080:8080"
     depends_on:
       - db
   db:
