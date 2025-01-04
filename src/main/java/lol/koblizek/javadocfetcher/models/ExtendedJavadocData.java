@@ -2,14 +2,18 @@ package lol.koblizek.javadocfetcher.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.javadoc.description.JavadocSnippet;
 import jakarta.persistence.*;
+import lol.koblizek.javadocfetcher.models.javadoc.AttachedType;
 import lol.koblizek.javadocfetcher.util.JavadocSnippetDeserializer;
 import lol.koblizek.javadocfetcher.util.JavadocSnippetSerializer;
+import lol.koblizek.javadocfetcher.util.NodeUtils;
 
 @Entity
 @Table(name = "javadoc_data")
@@ -37,9 +41,22 @@ public class ExtendedJavadocData {
     @JoinColumn(name = "class_javadoc_data_id")
     @JsonIgnore
     private ClassJavadocData classJavadocData;
+    
+    @Enumerated(EnumType.STRING)
+    private AttachedType attachedType;
+
+    /**
+     * The name of the attached element,
+     * can be null if {@link #attachedType} is {@link AttachedType#CONSTRUCTOR}.
+     * Will return fully qualified name if the attached type is {@link AttachedType#CLASS}
+     * , {@link AttachedType#ANNOTATION} or {@link AttachedType#INTERFACE}.
+     */
+    private String attachedName;
 
     public ExtendedJavadocData(JavadocComment comment) throws JsonProcessingException {
         this.javadoc = OBJECT_MAPPER.writeValueAsString(comment.parse());
+        this.attachedName = NodeUtils.getName(comment.getCommentedNode().orElseThrow());
+        this.attachedType = NodeUtils.getAttachedType(comment.getCommentedNode().orElseThrow());
     }
     
     public ExtendedJavadocData() {
@@ -61,11 +78,31 @@ public class ExtendedJavadocData {
         this.classJavadocData = classJavadocData;
     }
 
-    public String getJavadoc() {
-        return javadoc;
+    public JsonNode getJavadoc() {
+        try {
+            return OBJECT_MAPPER.readValue(javadoc, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setJavadoc(String javadoc) {
         this.javadoc = javadoc;
+    }
+
+    public AttachedType getAttachedType() {
+        return attachedType;
+    }
+
+    public void setAttachedType(AttachedType attachedType) {
+        this.attachedType = attachedType;
+    }
+
+    public String getAttachedName() {
+        return attachedName;
+    }
+
+    public void setAttachedName(String attachedName) {
+        this.attachedName = attachedName;
     }
 }
