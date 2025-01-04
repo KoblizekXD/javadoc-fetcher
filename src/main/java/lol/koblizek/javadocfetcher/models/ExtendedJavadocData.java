@@ -14,13 +14,16 @@ import lol.koblizek.javadocfetcher.models.javadoc.AttachedType;
 import lol.koblizek.javadocfetcher.util.JavadocSnippetDeserializer;
 import lol.koblizek.javadocfetcher.util.JavadocSnippetSerializer;
 import lol.koblizek.javadocfetcher.util.NodeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name = "javadoc_data")
 public class ExtendedJavadocData {
 
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedJavadocData.class);
+
     static {
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(JavadocSnippet.class, new JavadocSnippetSerializer());
@@ -82,7 +85,8 @@ public class ExtendedJavadocData {
         try {
             return OBJECT_MAPPER.readValue(javadoc, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Failed to parse javadoc", e);
+            return null;
         }
     }
 

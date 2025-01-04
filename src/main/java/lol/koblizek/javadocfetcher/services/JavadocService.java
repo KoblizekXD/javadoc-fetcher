@@ -15,6 +15,8 @@ import lol.koblizek.javadocfetcher.models.http.ArtifactQueryWithoutClass;
 import lol.koblizek.javadocfetcher.repositories.ArtifactDataRepository;
 import lol.koblizek.javadocfetcher.repositories.ClassJavadocDataRepository;
 import lol.koblizek.javadocfetcher.repositories.ExtendedJavadocDataRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -31,6 +33,8 @@ import java.util.zip.ZipInputStream;
 
 @Service
 public class JavadocService {
+    
+    public static final Logger LOGGER = LoggerFactory.getLogger(JavadocService.class);
 
     private final ArtifactDataRepository adRepository;
     private final ClassJavadocDataRepository cjRepository;
@@ -104,7 +108,7 @@ public class JavadocService {
             try {
                 classJavadocData.addJavadoc(ejRepository.save(new ExtendedJavadocData(javadoc)));
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to parse javadoc", e);
             }
         }
         return classJavadocData;
@@ -118,6 +122,7 @@ public class JavadocService {
                 .build().toUri();
 
         try {
+            // Don't use try-with-resources so we return a valid input stream!!
             var is = new ZipInputStream(sourceFileUri.toURL().openStream());
             ZipEntry entry;
             while ((entry = is.getNextEntry()) != null) {
@@ -126,7 +131,7 @@ public class JavadocService {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to open source file", e);
             return null;
         }
         return null;
