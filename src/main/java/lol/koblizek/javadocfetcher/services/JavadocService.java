@@ -6,6 +6,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.nodeTypes.NodeWithJavadoc;
+import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import lol.koblizek.javadocfetcher.models.ArtifactData;
 import lol.koblizek.javadocfetcher.models.ClassJavadocData;
@@ -79,6 +80,7 @@ public class JavadocService {
             if (zipInputStream == null) return null;
             var cu = StaticJavaParser.parse(zipInputStream);
             ClassJavadocData classJavadocData = getClassJavadocData(cu, targetFqn);
+            if (classJavadocData == null) return null;
             cjRepository.save(classJavadocData);
             artifactData.addClassData(classJavadocData);
             classJavadocData.setArtifactData(adRepository.save(artifactData));
@@ -89,7 +91,7 @@ public class JavadocService {
         }
     }
     
-    public ClassJavadocData getClassJavadocData(CompilationUnit cu, String targetFqn) {
+    public @Nullable ClassJavadocData getClassJavadocData(CompilationUnit cu, String targetFqn) {
         Optional<TypeDeclaration> first = cu.findFirst(TypeDeclaration.class, node -> {
             Optional<String> object = ((TypeDeclaration<?>) node).getFullyQualifiedName();
             return object.map(it -> it.equals(targetFqn)).orElse(false);
