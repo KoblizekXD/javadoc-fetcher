@@ -6,14 +6,12 @@ import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.modules.ModuleDeclaration;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
+import com.github.javaparser.ast.nodeTypes.NodeWithVariables;
 import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithAccessModifiers;
-import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithFinalModifier;
-import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithStaticModifier;
 import lol.koblizek.javadocfetcher.models.javadoc.AttachedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class NodeUtils {
@@ -35,6 +33,7 @@ public final class NodeUtils {
         return switch (node) {
             case NodeWithName<?> namedNode -> namedNode.getNameAsString();
             case NodeWithSimpleName<?> simpleNamedNode -> simpleNamedNode.getNameAsString();
+            case NodeWithVariables<?> nodeWithVariables -> nodeWithVariables.getVariables().get(0).getNameAsString();
             default -> null;
         };
     }
@@ -58,19 +57,8 @@ public final class NodeUtils {
     }
     
     public static List<String> getAccessModifiers(Node node) {
-        List<String> modifiers = new ArrayList<>();
-        if (node instanceof NodeWithAccessModifiers<?> nwa)
-            modifiers.addAll(nwa.getModifiers().stream().map(modifier -> modifier.getKeyword().asString()).toList());
-        if (node instanceof NodeWithStaticModifier<?> nws && nws.isStatic())
-            modifiers.add("static");
-        if (node instanceof NodeWithFinalModifier<?> nwf && nwf.isFinal())
-            modifiers.add("final");
-        if (node instanceof FieldDeclaration fd) {
-            if (fd.isTransient())
-                modifiers.add("transient");
-            if (fd.isVolatile())
-                modifiers.add("volatile");
-        }
-        return modifiers;
+        if (!(node instanceof NodeWithAccessModifiers<?> nwa))
+            return List.of();
+        return nwa.getModifiers().stream().map(modifier -> modifier.getKeyword().asString()).toList();
     }
 }

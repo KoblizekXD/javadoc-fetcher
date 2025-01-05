@@ -2,6 +2,8 @@ package lol.koblizek.javadocfetcher.models.extra;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import lol.koblizek.javadocfetcher.models.ExtendedJavadocData;
 import lol.koblizek.javadocfetcher.models.javadoc.AttachedType;
 import org.slf4j.Logger;
@@ -22,6 +24,25 @@ public abstract class ExtraAttachedInformation<T extends Node> {
         } catch (JsonProcessingException e) {
             LOGGER.error("Failed to serialize extra attached information!", e);
             return Optional.empty();
+        }
+    }
+    
+    public static String nodeAsString(Node node) {
+        switch (node) {
+            case MethodDeclaration md -> {
+                MethodExtras methodExtras = new MethodExtras();
+                methodExtras.setup(md);
+                return methodExtras.serialize().orElse(null);
+            }
+            case FieldDeclaration fd -> {
+                FieldExtras fieldExtras = new FieldExtras();
+                fieldExtras.setup(fd);
+                return fieldExtras.serialize().orElse(null);
+            }
+            default -> {
+                LOGGER.error("Unknown node type: {}", node.getClass());
+                return null;
+            }
         }
     }
 }

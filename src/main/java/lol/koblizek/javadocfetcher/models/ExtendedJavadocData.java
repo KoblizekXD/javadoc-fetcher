@@ -10,6 +10,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.javadoc.description.JavadocSnippet;
 import jakarta.persistence.*;
+import lol.koblizek.javadocfetcher.models.extra.ExtraAttachedInformation;
 import lol.koblizek.javadocfetcher.models.javadoc.AttachedType;
 import lol.koblizek.javadocfetcher.util.JavadocSnippetDeserializer;
 import lol.koblizek.javadocfetcher.util.JavadocSnippetSerializer;
@@ -40,6 +41,10 @@ public class ExtendedJavadocData {
     @Column(columnDefinition = "TEXT")
     private String javadoc;
     
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String extraInformation;
+    
     @ManyToOne
     @JoinColumn(name = "class_javadoc_data_id")
     @JsonIgnore
@@ -60,6 +65,7 @@ public class ExtendedJavadocData {
         this.javadoc = OBJECT_MAPPER.writeValueAsString(comment.parse());
         this.attachedName = NodeUtils.getName(comment.getCommentedNode().orElseThrow());
         this.attachedType = NodeUtils.getAttachedType(comment.getCommentedNode().orElseThrow());
+        this.extraInformation = ExtraAttachedInformation.nodeAsString(comment.getCommentedNode().orElseThrow());
     }
     
     public ExtendedJavadocData() {
@@ -86,8 +92,17 @@ public class ExtendedJavadocData {
             return OBJECT_MAPPER.readValue(javadoc, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
             LOGGER.error("Failed to parse javadoc", e);
-            return null;
+            return OBJECT_MAPPER.createObjectNode();
         }
+    }
+
+    public JsonNode getExtraInformation() {
+        try {
+            return OBJECT_MAPPER.readValue(javadoc, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Extra information", e);
+            return OBJECT_MAPPER.createObjectNode();
+        } 
     }
 
     public void setJavadoc(String javadoc) {

@@ -24,4 +24,28 @@ public class FieldExtras extends ExtraAttachedInformation<FieldDeclaration> {
         modifiers = NodeUtils.getAccessModifiers(node);
         type = node.getElementType().asString();
     }
+
+    public Annotations getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Annotations annotations) {
+        this.annotations = annotations;
+    }
+
+    public List<String> getModifiers() {
+        return modifiers;
+    }
+
+    public void setModifiers(List<String> modifiers) {
+        this.modifiers = modifiers;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }
