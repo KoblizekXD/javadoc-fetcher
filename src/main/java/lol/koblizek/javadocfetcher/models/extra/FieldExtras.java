@@ -1,5 +1,6 @@
 package lol.koblizek.javadocfetcher.models.extra;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import lol.koblizek.javadocfetcher.models.extra.util.Annotations;
 import lol.koblizek.javadocfetcher.models.javadoc.AttachedType;
@@ -8,7 +9,8 @@ import lol.koblizek.javadocfetcher.util.NodeUtils;
 import java.util.List;
 
 public class FieldExtras extends ExtraAttachedInformation<FieldDeclaration> {
-    
+
+    @JsonUnwrapped
     private Annotations annotations;
     private List<String> modifiers;
     private String type;

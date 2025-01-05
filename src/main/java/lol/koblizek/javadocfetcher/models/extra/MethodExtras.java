@@ -1,5 +1,6 @@
 package lol.koblizek.javadocfetcher.models.extra;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import lol.koblizek.javadocfetcher.models.extra.util.Annotations;
 import lol.koblizek.javadocfetcher.models.javadoc.AttachedType;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 public class MethodExtras extends ExtraAttachedInformation<MethodDeclaration> {
     
+    @JsonUnwrapped
     private Annotations annotations;
     private String returnType;
     private Map<String, String> parameters;
