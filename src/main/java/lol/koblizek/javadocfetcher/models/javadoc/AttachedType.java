@@ -10,5 +10,6 @@ public enum AttachedType {
     CONSTRUCTOR,
     PACKAGE,
     MODULE,
+    ENUM_CONSTANT,
     UNKNOWN
 }
